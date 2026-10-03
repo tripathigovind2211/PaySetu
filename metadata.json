@@ -1,0 +1,6 @@
+{
+  "name": "PaySetu",
+  "description": "Production-grade Indian digital payments platform with authorised UPI onboarding, QR checkout, fraud risk engine, reconciliation, and compliance dashboard.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

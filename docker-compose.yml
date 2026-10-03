@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: paysetu-postgres
+    environment:
+      POSTGRES_DB: paysetu_production
+      POSTGRES_USER: paysetu_admin
+      POSTGRES_PASSWORD: secure_change_in_production
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./docs/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+
+  redis:
+    image: redis:7-alpine
+    container_name: paysetu-redis
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--appendonly", "yes"]
+
+  paysetu-gateway:
+    build: .
+    container_name: paysetu-gateway
+    environment:
+      DATABASE_URL: jdbc:postgresql://postgres:5432/paysetu_production
+      REDIS_HOST: redis
+      ENVIRONMENT_MODE: SANDBOX
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+      - redis
+
+volumes:
+  pgdata:

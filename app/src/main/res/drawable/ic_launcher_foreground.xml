@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Glowing background accent circle -->
+    <path
+        android:fillColor="#1500D09C"
+        android:pathData="M54,54m-33,0a33,33 0 1,0 66,0a33,33 0 1,0 -66,0" />
+
+    <!-- Outer shield / trust ring node -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFC107"
+        android:strokeWidth="2.5"
+        android:pathData="M54,23 C68,23 79,30 81,45 C83,62 67,78 54,85 C41,78 25,62 27,45 C29,30 40,23 54,23 Z" />
+
+    <!-- Indian Rupee (₹) Symbol inside shield -->
+    <!-- Top Horizontal bar -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M42,35 L66,35 A2,2 0 0,1 66,39 L42,39 A2,2 0 0,1 42,35 Z" />
+    <!-- Second Horizontal bar -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M42,43 L64,43 A2,2 0 0,1 64,47 L42,47 A2,2 0 0,1 42,43 Z" />
+    <!-- Vertical stem and upper curve of Rupee -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="3.6"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M48,36 L48,56 C57,56 61,53 61,48 C61,43 57,40 48,40" />
+    <!-- Diagonal leg of Rupee -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#00D09C"
+        android:strokeWidth="4"
+        android:strokeLineCap="round"
+        android:pathData="M51,55 L65,71" />
+
+    <!-- Bridge dots / digital payment nodes -->
+    <path
+        android:fillColor="#00D09C"
+        android:pathData="M37,45m-2.5,0a2.5,2.5 0 1,0 5,0a2.5,2.5 0 1,0 -5,0" />
+    <path
+        android:fillColor="#FFC107"
+        android:pathData="M71,45m-2.5,0a2.5,2.5 0 1,0 5,0a2.5,2.5 0 1,0 -5,0" />
+</vector>

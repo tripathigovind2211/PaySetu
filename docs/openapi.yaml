@@ -1,0 +1,200 @@
+openapi: 3.0.3
+info:
+  title: PaySetu Payment Gateway & UPI PSP Bridge API
+  version: 1.0.0
+  description: |
+    Production-grade Indian Digital Payments Platform API.
+    Designed for compliance with RBI Payment Aggregator directives and NPCI UPI specifications.
+servers:
+  - url: https://api.paysetu.in/v1
+    description: Production Environment (Requires authorized PSP Bank Partner & RBI PA in-principle license)
+  - url: https://sandbox-api.paysetu.in/v1
+    description: Sandbox Environment (Full simulation with test UPI handles)
+
+paths:
+  /orders:
+    post:
+      summary: Create Payment Order
+      description: Generates a server-verified payment order and dynamic UPI deep link intent.
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrderRequest'
+      responses:
+        '201':
+          description: Order created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderResponse'
+        '400':
+          description: Invalid request parameters
+        '401':
+          description: Unauthorized API key
+
+  /payments/{paymentId}:
+    get:
+      summary: Verify Transaction Status
+      description: Independent server-to-server transaction verification using bank UTR.
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: paymentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Payment status details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentDetailsResponse'
+        '404':
+          description: Payment not found
+
+  /refunds:
+    post:
+      summary: Initiate Payment Refund
+      description: Full or partial refund credited directly to payer's original UPI linked bank account.
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefundRequest'
+      responses:
+        '200':
+          description: Refund initiated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RefundResponse'
+
+  /reconciliation/report:
+    get:
+      summary: Three-Way Settlement & Reconciliation Report
+      description: Download automated settlement ledger comparing internal payments, PSP switch records, and bank clearing reports.
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: Reconciliation summary and discrepancy list
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-Api-Key
+
+  schemas:
+    CreateOrderRequest:
+      type: object
+      required:
+        - amount
+        - currency
+        - merchantReference
+      properties:
+        amount:
+          type: number
+          format: double
+          example: 450.00
+        currency:
+          type: string
+          default: INR
+          example: INR
+        merchantReference:
+          type: string
+          example: ORDER_INV_88910
+        customerPhone:
+          type: string
+          example: "+919876543210"
+        customerEmail:
+          type: string
+          example: "customer@example.in"
+        description:
+          type: string
+          example: "Fresh Groceries Order"
+
+    OrderResponse:
+      type: object
+      properties:
+        orderId:
+          type: string
+          example: "ord_9182310"
+        amount:
+          type: number
+          example: 450.00
+        status:
+          type: string
+          example: "CREATED"
+        upiDeepLink:
+          type: string
+          example: "upi://pay?pa=sharmakirana@paysetu&pn=Sharma+Kirana&am=450.00&tr=ord_9182310"
+        expiresAt:
+          type: integer
+          example: 1772659200
+
+    PaymentDetailsResponse:
+      type: object
+      properties:
+        paymentId:
+          type: string
+          example: "pay_109283"
+        transactionRef:
+          type: string
+          description: 12-digit Indian UPI UTR / Bank Reference Number
+          example: "428901239841"
+        status:
+          type: string
+          enum: [CREATED, INITIATED, PENDING, SUCCESS, FAILED, EXPIRED, REFUNDED, DISPUTED]
+          example: "SUCCESS"
+        amount:
+          type: number
+          example: 450.00
+        netSettlement:
+          type: number
+          example: 445.47
+        merchantFee:
+          type: number
+          example: 3.83
+        taxGst:
+          type: number
+          example: 0.70
+
+    RefundRequest:
+      type: object
+      required:
+        - paymentId
+        - reason
+      properties:
+        paymentId:
+          type: string
+          example: "pay_109283"
+        amount:
+          type: number
+          example: 450.00
+        reason:
+          type: string
+          example: "Customer returned order items"
+
+    RefundResponse:
+      type: object
+      properties:
+        refundId:
+          type: string
+          example: "rfnd_881923"
+        status:
+          type: string
+          example: "SUCCESS"
+        pspRefundRef:
+          type: string
+          example: "RRF42891029"
